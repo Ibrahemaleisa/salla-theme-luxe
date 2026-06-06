@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الموقع قيد الصيانة | {{ store.name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Tajawal', sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; text-align: center; margin: 0; direction: rtl; }
+    .container { max-width: 500px; width: 100%; }
+    .logo { margin-bottom: 3rem; }
+    .logo img { height: 50px; width: auto; filter: brightness(0) invert(1); }
+    .logo span { font-size: 2rem; font-weight: 900; color: white; }
+    .icon { display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 96px; background: rgba(226,185,111,0.15); border-radius: 24px; margin-bottom: 2rem; }
+    h1 { font-size: 2rem; font-weight: 900; margin-bottom: 1rem; }
+    p { color: rgba(255,255,255,0.7); line-height: 1.8; margin-bottom: 2rem; font-size: 1.05rem; }
+    .countdown { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2.5rem; }
+    .countdown-item { display: flex; flex-direction: column; align-items: center; }
+    .countdown-value { font-size: 3rem; font-weight: 900; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+    .countdown-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 0.5rem; }
+    .social { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; }
+    .social a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; color: white; transition: background 0.2s; text-decoration: none; }
+    .social a:hover { background: rgba(226,185,111,0.4); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      {% if theme.settings.get('logo') %}
+      <img src="{{ theme.settings.get('logo') }}" alt="{{ store.name }}">
+      {% else %}
+      <span>{{ store.name }}</span>
+      {% endif %}
+    </div>
+
+    <div class="icon">
+      <svg xmlns="http://www.w3.org/2000/svg" style="width: 48px; height: 48px; color: #e2b96f;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </div>
+
+    <h1>الموقع قيد الصيانة</h1>
+    <p>نقوم بتحديث موقعنا لنقدم لك تجربة تسوق أفضل وأسرع. سنعود قريباً!</p>
+
+    {% if maintenance.end_date %}
+    <div class="countdown" data-countdown="{{ maintenance.end_date }}">
+      <div class="countdown-item"><div class="countdown-value" data-countdown-days>00</div><div class="countdown-label">أيام</div></div>
+      <div class="countdown-item"><div class="countdown-value" data-countdown-hours>00</div><div class="countdown-label">ساعات</div></div>
+      <div class="countdown-item"><div class="countdown-value" data-countdown-minutes>00</div><div class="countdown-label">دقائق</div></div>
+      <div class="countdown-item"><div class="countdown-value" data-countdown-seconds>00</div><div class="countdown-label">ثواني</div></div>
+    </div>
+    {% endif %}
+
+    {% if store.email %}
+    <p style="font-size: 0.9rem;">للتواصل: <a href="mailto:{{ store.email }}" style="color: #e2b96f;">{{ store.email }}</a></p>
+    {% endif %}
+
+    <div class="social">
+      {% if store.social.instagram %}<a href="{{ store.social.instagram }}" aria-label="انستقرام"><svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>{% endif %}
+      {% if store.social.twitter %}<a href="{{ store.social.twitter }}" aria-label="تويتر"><svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>{% endif %}
+      {% if store.social.snapchat %}<a href="{{ store.social.snapchat }}" aria-label="سناب شات"><svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24c6.624 0 11.99-5.373 11.99-12.013 0-6.628-5.366-11.987-11.99-11.987z"/></svg></a>{% endif %}
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-countdown]').forEach(function(el) {
+      var end = new Date(el.dataset.countdown).getTime();
+      var days = el.querySelector('[data-countdown-days]');
+      var hours = el.querySelector('[data-countdown-hours]');
+      var minutes = el.querySelector('[data-countdown-minutes]');
+      var seconds = el.querySelector('[data-countdown-seconds]');
+      function pad(n) { return String(Math.max(0,n)).padStart(2,'0'); }
+      function tick() {
+        var diff = end - Date.now();
+        if (diff <= 0) { el.innerHTML = '<p>انتهى الوقت</p>'; return; }
+        if (days) days.textContent = pad(Math.floor(diff/86400000));
+        if (hours) hours.textContent = pad(Math.floor((diff%86400000)/3600000));
+        if (minutes) minutes.textContent = pad(Math.floor((diff%3600000)/60000));
+        if (seconds) seconds.textContent = pad(Math.floor((diff%60000)/1000));
+      }
+      tick(); setInterval(tick, 1000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{% extends "layouts.master" %}
+{% set page_title = 'الصفحة غير موجودة - 404' %}
+
+{% block content %}
+<section class="min-h-[80vh] flex items-center justify-center section">
+  <div class="container mx-auto px-4">
+    <div class="max-w-lg mx-auto text-center">
+
+      {# Illustration #}
+      <div class="relative mb-8">
+        <div class="text-[10rem] font-black text-[var(--color-primary)]/5 leading-none select-none">404</div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="w-36 h-36 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-[var(--color-primary)]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <h1 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] dark:text-white mb-3">
+        عفواً! الصفحة غير موجودة
+      </h1>
+      <p class="text-[var(--color-muted)] mb-8 leading-relaxed">
+        الصفحة التي تبحث عنها غير موجودة أو ربما تم نقلها. تحقق من الرابط أو عُد إلى الصفحة الرئيسية.
+      </p>
+
+      {# Quick Links #}
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+        <a href="{{ store.url }}" class="card-flat rounded-[var(--border-radius-card)] p-4 text-center hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors group">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto mb-2 text-[var(--color-muted)] group-hover:text-[var(--color-primary)] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span class="text-sm font-medium">الرئيسية</span>
+        </a>
+        <a href="{{ store.products_url }}" class="card-flat rounded-[var(--border-radius-card)] p-4 text-center hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors group">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto mb-2 text-[var(--color-muted)] group-hover:text-[var(--color-primary)] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span class="text-sm font-medium">المنتجات</span>
+        </a>
+        <a href="{{ store.offers_url }}" class="card-flat rounded-[var(--border-radius-card)] p-4 text-center hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors group">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto mb-2 text-[var(--color-muted)] group-hover:text-[var(--color-primary)] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+          <span class="text-sm font-medium">العروض</span>
+        </a>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="{{ store.url }}" class="btn-primary btn btn-lg">العودة للرئيسية</a>
+        <button onclick="history.back()" class="btn-outline btn btn-lg">الصفحة السابقة</button>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
