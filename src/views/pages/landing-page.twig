@@ -1,0 +1,59 @@
+{% extends "layouts.master" %}
+{% set page_title = landing.title | default('عرض خاص') %}
+
+{% block content %}
+{# Full-width landing page - no header/footer padding adjustments #}
+<div class="min-h-screen">
+
+  {# Hero Section #}
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-primary">
+    {% if landing.bg_image %}
+    <div class="absolute inset-0"><img src="{{ landing.bg_image }}" alt="" class="w-full h-full object-cover opacity-20"></div>
+    {% endif %}
+    <div class="relative container mx-auto px-4 text-center text-white py-20">
+      {% if landing.logo %}<img src="{{ landing.logo }}" alt="{{ store.name }}" class="h-16 mx-auto mb-8">{% endif %}
+      <h1 class="text-4xl md:text-6xl font-black leading-tight mb-6">{{ landing.title | default('عرض حصري لفترة محدودة') }}</h1>
+      {% if landing.subtitle %}<p class="text-xl md:text-2xl text-white/80 mb-10 max-w-2xl mx-auto">{{ landing.subtitle }}</p>{% endif %}
+
+      {# Countdown #}
+      {% if landing.end_date %}
+      <div class="inline-flex items-center gap-6 mb-12 bg-white/10 backdrop-blur-sm rounded-2xl px-8 py-5" data-countdown="{{ landing.end_date }}">
+        {% for unit in [{ key: 'days', label: 'أيام' }, { key: 'hours', label: 'ساعات' }, { key: 'minutes', label: 'دقائق' }, { key: 'seconds', label: 'ثواني' }] %}
+        <div class="text-center">
+          <div class="text-4xl font-black tabular-nums" data-countdown-{{ unit.key }}>00</div>
+          <div class="text-sm text-white/60">{{ unit.label }}</div>
+        </div>
+        {% if not loop.last %}<span class="text-3xl text-white/40">:</span>{% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if landing.cta_url %}
+      <div>
+        <a href="{{ landing.cta_url }}" class="btn-secondary btn btn-lg text-lg px-10 py-4">
+          {{ landing.cta_text | default('تسوق الآن') }}
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  {# Featured Products #}
+  {% if landing.products %}
+  <section class="section bg-white dark:bg-[var(--color-surface)]">
+    <div class="container mx-auto px-4">
+      <div class="section-header">
+        <h2 class="section-header__title">منتجات العرض</h2>
+        <div class="section-header__divider"></div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {% for product in landing.products %}
+        <div data-animate>{% include 'components/partials/product-card' with { product: product } %}</div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

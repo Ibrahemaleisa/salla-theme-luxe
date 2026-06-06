@@ -1,0 +1,86 @@
+{% extends "layouts.master" %}
+{% set page_title = 'شكراً على طلبك' %}
+
+{% block content %}
+<section class="min-h-[70vh] flex items-center justify-center section">
+  <div class="container mx-auto px-4">
+    <div class="max-w-2xl mx-auto text-center" data-animate>
+
+      {# Success Icon #}
+      <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-100 text-green-500 mb-8 mx-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+
+      <h1 class="text-3xl md:text-4xl font-black text-[var(--color-primary)] dark:text-white mb-4">
+        شكراً على طلبك! 🎉
+      </h1>
+      <p class="text-lg text-[var(--color-muted)] mb-8 leading-relaxed">
+        تم استلام طلبك بنجاح وسنبدأ بمعالجته فوراً. ستصلك رسالة تأكيد على بريدك الإلكتروني.
+      </p>
+
+      {# Order Info #}
+      {% if order %}
+      <div class="card-flat rounded-[var(--border-radius-card)] p-6 mb-8 text-start">
+        <h2 class="font-bold text-base mb-4 text-[var(--color-primary)] dark:text-white">تفاصيل الطلب</h2>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <p class="text-[var(--color-muted)] mb-1">رقم الطلب</p>
+            <p class="font-bold text-[var(--color-primary)] dark:text-white text-lg">#{{ order.reference_id }}</p>
+          </div>
+          <div>
+            <p class="text-[var(--color-muted)] mb-1">الإجمالي</p>
+            <p class="font-bold text-[var(--color-primary)] dark:text-white text-lg">{{ order.total.formatted }}</p>
+          </div>
+          <div>
+            <p class="text-[var(--color-muted)] mb-1">طريقة الدفع</p>
+            <p class="font-semibold">{{ order.payment_method }}</p>
+          </div>
+          <div>
+            <p class="text-[var(--color-muted)] mb-1">تاريخ الطلب</p>
+            <p class="font-semibold">{{ order.date }}</p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {# Steps #}
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        {% set steps = [
+          { icon: 'check', title: 'تم تأكيد الطلب', desc: 'تلقينا طلبك وبدأنا بمعالجته', done: true },
+          { icon: 'truck', title: 'جاري التجهيز', desc: 'يتم تجهيز منتجاتك الآن', done: false },
+          { icon: 'home', title: 'التوصيل', desc: 'سيصلك طلبك في أقرب وقت', done: false }
+        ] %}
+        {% for step in steps %}
+        <div class="flex flex-col items-center text-center p-4 rounded-[var(--border-radius-card)] {{ step.done ? 'bg-green-50 dark:bg-green-900/20' : 'bg-gray-50 dark:bg-gray-800' }}">
+          <div class="w-10 h-10 rounded-full {{ step.done ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-[var(--color-muted)]' }} flex items-center justify-center mb-3">
+            {% if step.icon == 'check' %}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            {% elseif step.icon == 'truck' %}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+            {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            {% endif %}
+          </div>
+          <p class="font-semibold text-sm">{{ step.title }}</p>
+          <p class="text-xs text-[var(--color-muted)] mt-1">{{ step.desc }}</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      {# CTA Buttons #}
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        {% if order %}
+        <a href="{{ order.url }}" class="btn-primary btn btn-lg">
+          تتبع طلبي
+        </a>
+        {% endif %}
+        <a href="{{ store.url }}" class="btn-outline btn btn-lg">
+          مواصلة التسوق
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

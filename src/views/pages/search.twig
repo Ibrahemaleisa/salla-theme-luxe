@@ -1,0 +1,154 @@
+{% extends "layouts.master" %}
+
+{% set page_title = request.q ? ('نتائج البحث عن: ' ~ request.q) : 'البحث' %}
+{% set page_description = 'نتائج البحث في ' ~ store.name %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-800/50 border-b border-[var(--color-border)]">
+  <div class="container mx-auto px-4 py-6">
+    <nav class="breadcrumb">
+      <div class="breadcrumb__item"><a href="{{ store.url }}" class="breadcrumb__link">الرئيسية</a></div>
+      <div class="breadcrumb__item" aria-current="page">البحث</div>
+    </nav>
+
+    {# Search Form #}
+    <form action="{{ store.search_url }}" method="GET" class="mt-4 max-w-2xl" role="search">
+      <div class="flex gap-2">
+        <div class="relative flex-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="absolute start-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input
+            type="search"
+            name="q"
+            value="{{ request.q }}"
+            placeholder="ابحث عن منتجات، تصنيفات..."
+            class="form-control ps-11"
+            autofocus
+            aria-label="مصطلح البحث"
+          >
+        </div>
+        <button type="submit" class="btn-primary btn px-6">بحث</button>
+      </div>
+    </form>
+
+    {% if request.q %}
+    <p class="text-sm text-[var(--color-muted)] mt-3">
+      {% if products.total %}
+        عرض {{ products.total }} نتيجة للبحث عن "<strong class="text-[var(--color-primary)] dark:text-white">{{ request.q }}</strong>"
+      {% else %}
+        لا توجد نتائج للبحث عن "<strong>{{ request.q }}</strong>"
+      {% endif %}
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+<section class="section">
+  <div class="container mx-auto px-4">
+    {% if request.q %}
+
+      {% if products.items %}
+      {# Sort & Filter Controls #}
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <label for="search-sort" class="text-sm font-medium">ترتيب:</label>
+          <select id="search-sort" class="form-select text-sm py-2 w-auto" onchange="window.location.href = this.value">
+            <option value="?q={{ request.q }}&sort=relevant" {{ request.sort == 'relevant' ? 'selected' : '' }}>الأكثر صلة</option>
+            <option value="?q={{ request.q }}&sort=latest" {{ request.sort == 'latest' ? 'selected' : '' }}>الأحدث</option>
+            <option value="?q={{ request.q }}&sort=price_asc" {{ request.sort == 'price_asc' ? 'selected' : '' }}>السعر: من الأقل</option>
+            <option value="?q={{ request.q }}&sort=price_desc" {{ request.sort == 'price_desc' ? 'selected' : '' }}>السعر: من الأعلى</option>
+          </select>
+        </div>
+        <p class="text-sm text-[var(--color-muted)]">{{ products.total }} نتيجة</p>
+      </div>
+
+      {# Results Grid #}
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+        {% for product in products.items %}
+        <div data-animate>
+          {% include 'components/partials/product-card' with { product: product } %}
+        </div>
+        {% endfor %}
+      </div>
+
+      {# Pagination #}
+      {% if products.pages > 1 %}
+      <nav class="pagination mt-10" aria-label="ترقيم الصفحات">
+        {% if products.prev_page %}<a href="{{ products.prev_page }}" class="pagination__item">السابق</a>{% endif %}
+        {% for p in 1..products.pages %}
+          {% if p == products.current_page %}
+            <span class="pagination__item pagination__item--active" aria-current="page">{{ p }}</span>
+          {% elseif p == 1 or p == products.pages or (p >= products.current_page - 2 and p <= products.current_page + 2) %}
+            <a href="?q={{ request.q }}&page={{ p }}" class="pagination__item">{{ p }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if products.next_page %}<a href="{{ products.next_page }}" class="pagination__item">التالي</a>{% endif %}
+      </nav>
+      {% endif %}
+
+      {% else %}
+      {# No Results #}
+      <div class="empty-state py-16">
+        <svg xmlns="http://www.w3.org/2000/svg" class="empty-state__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <h2 class="empty-state__title">لا توجد نتائج</h2>
+        <p class="empty-state__desc">
+          لم نجد أي منتجات تطابق "<strong>{{ request.q }}</strong>". جرّب كلمات مختلفة أو تصفح تصنيفاتنا.
+        </p>
+
+        {# Suggestions #}
+        <div class="mt-6 text-start w-full max-w-sm mx-auto">
+          <p class="text-sm font-semibold text-[var(--color-text)] mb-3">اقتراحات:</p>
+          <ul class="text-sm text-[var(--color-muted)] space-y-1.5 list-disc list-inside">
+            <li>تأكد من صحة الإملاء</li>
+            <li>جرّب كلمات أكثر عمومية</li>
+            <li>تصفح التصنيفات بدلاً من البحث</li>
+            <li>تواصل معنا إذا كنت تبحث عن منتج محدد</li>
+          </ul>
+        </div>
+
+        {# Browse Categories #}
+        {% if store.categories %}
+        <div class="mt-8 text-center">
+          <p class="text-sm font-semibold mb-4">تصفح تصنيفاتنا</p>
+          <div class="flex flex-wrap justify-center gap-2">
+            {% for category in store.categories | slice(0, 8) %}
+            <a href="{{ category.url }}" class="badge badge-gray hover:bg-[var(--color-primary)] hover:text-white transition-colors px-3 py-1.5 text-xs rounded-full cursor-pointer">
+              {{ category.name }}
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+    {% else %}
+    {# No query yet #}
+    <div class="empty-state py-16">
+      <svg xmlns="http://www.w3.org/2000/svg" class="empty-state__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <h2 class="empty-state__title">ابحث عن ما تريد</h2>
+      <p class="empty-state__desc">أدخل كلمة البحث في الحقل أعلاه للعثور على المنتجات التي تبحث عنها.</p>
+
+      {# Popular Searches #}
+      {% if store.categories %}
+      <div class="mt-8">
+        <p class="text-sm font-semibold mb-4">تصفح التصنيفات</p>
+        <div class="flex flex-wrap justify-center gap-2">
+          {% for category in store.categories | slice(0, 10) %}
+          <a href="{{ category.url }}" class="badge badge-gray hover:bg-[var(--color-primary)] hover:text-white transition-colors px-3 py-1.5 text-xs rounded-full cursor-pointer">
+            {{ category.name }}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
