@@ -1,13 +1,28 @@
+{# ── Resolve font from boolean switches ── #}
+{% if theme.settings.get('font_cairo') %}
+  {% set _font = 'cairo' %}
+{% elseif theme.settings.get('font_almarai') %}
+  {% set _font = 'almarai' %}
+{% else %}
+  {% set _font = 'tajawal' %}
+{% endif %}
+
+{# ── Resolve border-radius from boolean switches ── #}
+{% if theme.settings.get('radius_sharp') %}
+  {% set _radius = 'none' %}
+{% elseif theme.settings.get('radius_large') %}
+  {% set _radius = 'large' %}
+{% else %}
+  {% set _radius = 'medium' %}
+{% endif %}
+
 <!DOCTYPE html>
 <html lang="{{ store.language }}" dir="{{ store.direction }}"
-  data-primary-color="{{ theme.settings.get('primary_color') }}"
-  data-secondary-color="{{ theme.settings.get('secondary_color') }}"
-  data-accent-color="{{ theme.settings.get('accent_color') }}"
-  data-text-color="{{ theme.settings.get('text_color') }}"
-  data-bg-color="{{ theme.settings.get('bg_color') }}"
-  data-font="{{ theme.settings.get('font_family') }}"
-  data-radius="{{ theme.settings.get('border_radius') }}"
-  data-dark-mode="{{ theme.settings.get('dark_mode') }}"
+  data-primary-color="{{ theme.settings.get('primary_color') | default('#1a1a2e') }}"
+  data-secondary-color="{{ theme.settings.get('secondary_color') | default('#e2b96f') }}"
+  data-accent-color="{{ theme.settings.get('accent_color') | default('#c9a84c') }}"
+  data-font="{{ _font }}"
+  data-radius="{{ _radius }}"
   {% if theme.settings.get('dark_mode') %}class="dark"{% endif %}
 >
 <head>
@@ -48,15 +63,12 @@
   {# Preconnect & Fonts #}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  {% set font = theme.settings.get('font_family') | default('tajawal') %}
-  {% if font == 'tajawal' %}
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-  {% elseif font == 'cairo' %}
+  {% if _font == 'cairo' %}
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-  {% elseif font == 'almarai' %}
+  {% elseif _font == 'almarai' %}
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
-  {% elseif font == 'noto-kufi' %}
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  {% else %}
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
   {% endif %}
 
   {# Swiper CSS #}
@@ -67,14 +79,12 @@
 
   {% block styles %}{% endblock %}
 
-  {# Inline Custom Colors #}
+  {# Inline Custom Colors & Settings #}
   <style>
     :root {
-      --color-primary: {{ theme.settings.get('primary_color') | default('#1a1a2e') }};
+      --color-primary:   {{ theme.settings.get('primary_color')   | default('#1a1a2e') }};
       --color-secondary: {{ theme.settings.get('secondary_color') | default('#e2b96f') }};
-      --color-accent: {{ theme.settings.get('accent_color') | default('#c9a84c') }};
-      --color-text: {{ theme.settings.get('text_color') | default('#1f2937') }};
-      --color-bg: {{ theme.settings.get('bg_color') | default('#ffffff') }};
+      --color-accent:    {{ theme.settings.get('accent_color')    | default('#c9a84c') }};
     }
     {% if theme.settings.get('custom_css') %}
       {{ theme.settings.get('custom_css') | raw }}
@@ -88,11 +98,8 @@
 
 <body
   class="bg-[var(--color-bg)] text-[var(--color-text)] antialiased"
-  data-primary-color="{{ theme.settings.get('primary_color') }}"
-  data-secondary-color="{{ theme.settings.get('secondary_color') }}"
-  data-accent-color="{{ theme.settings.get('accent_color') }}"
-  data-font="{{ theme.settings.get('font_family') | default('tajawal') }}"
-  data-radius="{{ theme.settings.get('border_radius') | default('medium') }}"
+  data-font="{{ _font }}"
+  data-radius="{{ _radius }}"
   data-dark-mode="{{ theme.settings.get('dark_mode') ? 'true' : 'false' }}"
 >
 

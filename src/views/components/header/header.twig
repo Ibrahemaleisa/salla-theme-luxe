@@ -1,7 +1,7 @@
 {# Main Header #}
-{% set header_style = theme.settings.get('header_style') | default('default') %}
-{% set is_sticky = theme.settings.get('header_sticky') %}
+{% set is_sticky      = theme.settings.get('header_sticky') %}
 {% set is_transparent = theme.settings.get('header_transparent') %}
+{% set is_centered    = theme.settings.get('header_centered') %}
 
 <header
   id="site-header"
@@ -13,7 +13,6 @@
     {% if is_transparent %}is-transparent{% endif %}
     [&.is-scrolled]:shadow-md
     [&.is-hidden]:-translate-y-full
-    {% if header_style == 'centered' %}text-center{% endif %}
   "
   style="height: var(--header-height);"
 >
@@ -36,7 +35,7 @@
       {# Logo #}
       <a
         href="{{ store.url }}"
-        class="flex-shrink-0 {{ header_style == 'centered' ? 'order-2 lg:order-none' : '' }}"
+        class="flex-shrink-0 {{ is_centered ? 'order-2 lg:order-none' : '' }}"
         aria-label="{{ store.name }}"
       >
         {% if theme.settings.get('logo') %}
@@ -56,7 +55,6 @@
       </a>
 
       {# Desktop Navigation #}
-      {% if header_style != 'minimal' %}
       <nav class="hidden lg:flex items-center gap-1 flex-1 justify-center" aria-label="التنقل الرئيسي">
         {% for item in store.menu %}
         <div class="relative group">
@@ -89,7 +87,6 @@
         </div>
         {% endfor %}
       </nav>
-      {% endif %}
 
       {# Header Actions #}
       <div class="flex items-center gap-2">

@@ -1,27 +1,49 @@
-{# Luxe Brands Component #}
-{% set title = component.fields.title | default('علاماتنا التجارية') %}
-{% set style = component.fields.style | default('slider') %}
-{% set show_name = component.fields.show_name | default(false) %}
+{#
+  Luxe Brands Component
+  Fields: title (string), show_as_grid (boolean), show_name (boolean)
+#}
+{% set title       = component.fields.title       | default('') %}
+{% set show_grid   = component.fields.show_as_grid | default(false) %}
+{% set show_name   = component.fields.show_name   | default(false) %}
 
+{% if store.brands %}
 <section class="section-sm border-y border-[var(--color-border)]">
   <div class="container mx-auto px-4">
+
     {% if title %}
-    <p class="text-center text-sm font-semibold text-[var(--color-muted)] uppercase tracking-widest mb-8">{{ title }}</p>
+    <p class="text-center text-sm font-semibold text-[var(--color-muted)] uppercase tracking-widest mb-8">
+      {{ title }}
+    </p>
     {% endif %}
 
-    {% if style == 'slider' %}
+    {% if show_grid %}
+    {# ── Grid Layout ── #}
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6">
+      {% for brand in store.brands %}
+      <a href="{{ brand.url }}" class="flex flex-col items-center gap-2 group" aria-label="{{ brand.name }}">
+        <div class="w-full aspect-square rounded-[var(--border-radius)] border border-[var(--color-border)] flex items-center justify-center p-3 group-hover:border-[var(--color-primary)] transition-colors">
+          {% if brand.image %}
+          <img src="{{ brand.image }}" alt="{{ brand.name }}" class="max-w-full max-h-full object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300" loading="lazy">
+          {% else %}
+          <span class="text-xs font-bold text-[var(--color-muted)]">{{ brand.name | first | upper }}</span>
+          {% endif %}
+        </div>
+        {% if show_name %}
+        <span class="text-xs text-center text-[var(--color-muted)] group-hover:text-[var(--color-primary)] transition-colors font-medium">{{ brand.name }}</span>
+        {% endif %}
+      </a>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    {# ── Auto-scroll Slider ── #}
     <div class="swiper" data-swiper="brands">
       <div class="swiper-wrapper items-center">
         {% for brand in store.brands %}
         <div class="swiper-slide">
           <a href="{{ brand.url }}" class="flex items-center justify-center p-4 group" aria-label="{{ brand.name }}">
             {% if brand.image %}
-            <img
-              src="{{ brand.image }}"
-              alt="{{ brand.name }}"
-              class="h-12 w-auto max-w-[100px] object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-              loading="lazy"
-            >
+            <img src="{{ brand.image }}" alt="{{ brand.name }}" class="h-12 w-auto max-w-[100px] object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300" loading="lazy">
             {% else %}
             <span class="text-sm font-bold text-[var(--color-muted)] group-hover:text-[var(--color-primary)] transition-colors">{{ brand.name }}</span>
             {% endif %}
@@ -30,28 +52,8 @@
         {% endfor %}
       </div>
     </div>
-
-    {% else %}
-    {# Grid Style #}
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6">
-      {% for brand in store.brands %}
-      <a href="{{ brand.url }}" class="flex flex-col items-center gap-2 group" aria-label="{{ brand.name }}">
-        {% if brand.image %}
-        <div class="w-full aspect-square rounded-[var(--border-radius)] border border-[var(--color-border)] flex items-center justify-center p-3 group-hover:border-[var(--color-primary)] transition-colors">
-          <img
-            src="{{ brand.image }}"
-            alt="{{ brand.name }}"
-            class="max-w-full max-h-full object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-            loading="lazy"
-          >
-        </div>
-        {% endif %}
-        {% if show_name %}
-        <span class="text-xs text-center text-[var(--color-muted)] group-hover:text-[var(--color-primary)] transition-colors font-medium">{{ brand.name }}</span>
-        {% endif %}
-      </a>
-      {% endfor %}
-    </div>
     {% endif %}
+
   </div>
 </section>
+{% endif %}

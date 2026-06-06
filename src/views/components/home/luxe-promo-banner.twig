@@ -1,25 +1,43 @@
-{# Luxe Promo Banner - Dual Banner #}
+{#
+  Luxe Promo Banner - Multi Banner Grid
+  Fields: banners (collection: image, title, url)
+  Min: 2 banners, Max: 4 banners
+#}
+{% set banners = component.fields.banners | default([]) %}
+{% set count   = banners | length %}
+
+{% if count > 0 %}
 <section class="section-sm">
   <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+    <div class="grid gap-4 md:gap-6
+      {% if count == 2 %}grid-cols-1 md:grid-cols-2
+      {% elseif count == 3 %}grid-cols-1 md:grid-cols-3
+      {% else %}grid-cols-2 md:grid-cols-4{% endif %}">
 
-      {# Banner 1 #}
-      {% if component.fields.banner_1_image %}
+      {% for banner in banners %}
       <a
-        href="{{ component.fields.banner_1_url | default('#') }}"
+        href="{{ banner.url | default('#') }}"
         class="relative rounded-[var(--border-radius-card)] overflow-hidden group block"
-        style="aspect-ratio: 16/9;"
+        style="aspect-ratio: {% if count == 2 %}16/9{% else %}4/3{% endif %};"
+        data-animate
       >
+        {# Image #}
+        {% if banner.image %}
         <img
-          src="{{ component.fields.banner_1_image }}"
-          alt="{{ component.fields.banner_1_title }}"
+          src="{{ banner.image }}"
+          alt="{{ banner.title | default('') }}"
           class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         >
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-opacity duration-300 group-hover:from-black/70"></div>
-        <div class="absolute inset-0 flex flex-col justify-end p-6 text-white">
-          {% if component.fields.banner_1_title %}
-          <h3 class="text-xl md:text-2xl font-bold mb-2">{{ component.fields.banner_1_title }}</h3>
+        {% else %}
+        <div class="w-full h-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)]"></div>
+        {% endif %}
+
+        {# Overlay & Text #}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-opacity duration-300 group-hover:from-black/75"></div>
+        <div class="absolute inset-0 flex flex-col justify-end p-5 text-white">
+          {% if banner.title %}
+          <h3 class="font-bold text-lg md:text-xl leading-tight mb-2">{{ banner.title }}</h3>
           {% endif %}
           <span class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-secondary)] group-hover:gap-3 transition-all duration-200">
             تسوق الآن
@@ -29,36 +47,9 @@
           </span>
         </div>
       </a>
-      {% endif %}
-
-      {# Banner 2 #}
-      {% if component.fields.banner_2_image %}
-      <a
-        href="{{ component.fields.banner_2_url | default('#') }}"
-        class="relative rounded-[var(--border-radius-card)] overflow-hidden group block"
-        style="aspect-ratio: 16/9;"
-      >
-        <img
-          src="{{ component.fields.banner_2_image }}"
-          alt="{{ component.fields.banner_2_title }}"
-          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          loading="lazy"
-        >
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-opacity duration-300 group-hover:from-black/70"></div>
-        <div class="absolute inset-0 flex flex-col justify-end p-6 text-white">
-          {% if component.fields.banner_2_title %}
-          <h3 class="text-xl md:text-2xl font-bold mb-2">{{ component.fields.banner_2_title }}</h3>
-          {% endif %}
-          <span class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-secondary)] group-hover:gap-3 transition-all duration-200">
-            تسوق الآن
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-            </svg>
-          </span>
-        </div>
-      </a>
-      {% endif %}
+      {% endfor %}
 
     </div>
   </div>
 </section>
+{% endif %}
