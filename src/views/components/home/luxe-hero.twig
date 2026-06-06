@@ -22,14 +22,21 @@
 
       {% if component.fields.slides %}
         {% for slide in component.fields.slides %}
+        {# Twilight collection fields use dot-notation keys: slides.image, slides.title, etc. #}
+        {% set slide_image    = slide['slides.image']    | default(null) %}
+        {% set slide_title    = slide['slides.title']    | default(null) %}
+        {% set slide_subtitle = slide['slides.subtitle'] | default(null) %}
+        {% set slide_btn_text = slide['slides.btn_text'] | default(null) %}
+        {% set slide_btn_url  = slide['slides.btn_url']  | default(null) %}
+
         <div class="swiper-slide relative">
 
           {# Background Image #}
-          {% if slide.image %}
+          {% if slide_image %}
           <div class="absolute inset-0">
             <img
-              src="{{ slide.image }}"
-              alt="{{ slide.title | default(store.name) }}"
+              src="{{ slide_image }}"
+              alt="{{ slide_title | default(store.name) }}"
               class="w-full h-full object-cover"
               {% if loop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
             >
@@ -43,22 +50,22 @@
           <div class="relative h-full flex items-center">
             <div class="container mx-auto px-4">
               <div class="max-w-2xl text-white" data-animate>
-                {% if slide.title %}
+                {% if slide_title %}
                 <h2 class="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4 text-balance">
-                  {{ slide.title }}
+                  {{ slide_title }}
                 </h2>
                 {% endif %}
 
-                {% if slide.subtitle %}
+                {% if slide_subtitle %}
                 <p class="text-lg md:text-xl text-white/80 mb-8 leading-relaxed max-w-lg">
-                  {{ slide.subtitle }}
+                  {{ slide_subtitle }}
                 </p>
                 {% endif %}
 
-                {% if slide.btn_text and slide.btn_url %}
+                {% if slide_btn_text and slide_btn_url %}
                 <div class="flex items-center gap-4 flex-wrap">
-                  <a href="{{ slide.btn_url }}" class="btn-secondary btn btn-lg">
-                    {{ slide.btn_text }}
+                  <a href="{{ slide_btn_url }}" class="btn-secondary btn btn-lg">
+                    {{ slide_btn_text }}
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>

@@ -15,17 +15,22 @@
       {% else %}grid-cols-2 md:grid-cols-4{% endif %}">
 
       {% for banner in banners %}
+      {# dot-notation keys from Twilight collection fields #}
+      {% set b_image = banner['banners.image'] | default(null) %}
+      {% set b_title = banner['banners.title'] | default(null) %}
+      {% set b_url   = banner['banners.url']   | default('#') %}
+
       <a
-        href="{{ banner.url | default('#') }}"
+        href="{{ b_url }}"
         class="relative rounded-[var(--border-radius-card)] overflow-hidden group block"
         style="aspect-ratio: {% if count == 2 %}16/9{% else %}4/3{% endif %};"
         data-animate
       >
         {# Image #}
-        {% if banner.image %}
+        {% if b_image %}
         <img
-          src="{{ banner.image }}"
-          alt="{{ banner.title | default('') }}"
+          src="{{ b_image }}"
+          alt="{{ b_title | default('') }}"
           class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         >
@@ -36,8 +41,8 @@
         {# Overlay & Text #}
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-opacity duration-300 group-hover:from-black/75"></div>
         <div class="absolute inset-0 flex flex-col justify-end p-5 text-white">
-          {% if banner.title %}
-          <h3 class="font-bold text-lg md:text-xl leading-tight mb-2">{{ banner.title }}</h3>
+          {% if b_title %}
+          <h3 class="font-bold text-lg md:text-xl leading-tight mb-2">{{ b_title }}</h3>
           {% endif %}
           <span class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-secondary)] group-hover:gap-3 transition-all duration-200">
             تسوق الآن
