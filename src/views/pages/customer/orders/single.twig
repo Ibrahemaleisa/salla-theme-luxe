@@ -1,0 +1,120 @@
+{% extends "layouts.master" %}
+{% set page_title = 'تفاصيل الطلب #' ~ order.reference_id %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-800/50 border-b border-[var(--color-border)]">
+  <div class="container mx-auto px-4 py-6">
+    <nav class="breadcrumb"><div class="breadcrumb__item"><a href="{{ store.url }}" class="breadcrumb__link">الرئيسية</a></div><div class="breadcrumb__item"><a href="{{ store.customer.orders_url }}" class="breadcrumb__link">طلباتي</a></div><div class="breadcrumb__item" aria-current="page">#{{ order.reference_id }}</div></nav>
+    <div class="flex flex-wrap items-center justify-between gap-4 mt-2">
+      <h1 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] dark:text-white">طلب رقم #{{ order.reference_id }}</h1>
+      <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold
+        {% if order.status.slug == 'completed' %}bg-green-100 text-green-800
+        {% elseif order.status.slug == 'cancelled' %}bg-red-100 text-red-800
+        {% elseif order.status.slug == 'processing' %}bg-blue-100 text-blue-800
+        {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+        {{ order.status.name }}
+      </span>
+    </div>
+    <p class="text-sm text-[var(--color-muted)] mt-1">تاريخ الطلب: {{ order.date }}</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-6">
+
+        {# Order Items #}
+        <div class="card-flat rounded-[var(--border-radius-card)] overflow-hidden">
+          <div class="px-5 py-4 border-b border-[var(--color-border)]">
+            <h2 class="font-bold text-[var(--color-primary)] dark:text-white">المنتجات المطلوبة</h2>
+          </div>
+          <div class="divide-y divide-[var(--color-border)]">
+            {% for item in order.items %}
+            <div class="flex items-center gap-4 p-5">
+              <div class="w-16 h-16 rounded-[var(--border-radius)] overflow-hidden bg-gray-100 flex-shrink-0">
+                <img src="{{ item.product.thumbnail }}" alt="{{ item.product.name }}" class="w-full h-full object-cover" loading="lazy">
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold text-sm line-clamp-2">{{ item.product.name }}</p>
+                {% if item.options %}<p class="text-xs text-[var(--color-muted)] mt-0.5">{{ item.options | join(' · ') }}</p>{% endif %}
+                <p class="text-xs text-[var(--color-muted)] mt-1">الكمية: {{ item.quantity }}</p>
+              </div>
+              <div class="text-end">
+                <p class="font-bold text-[var(--color-primary)] dark:text-white text-sm">{{ item.price.formatted }}</p>
+                <p class="text-xs text-[var(--color-muted)]">{{ item.unit_price.formatted }} للوحدة</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {# Order Status Timeline #}
+        {% if order.timeline %}
+        <div class="card-flat rounded-[var(--border-radius-card)] p-5">
+          <h2 class="font-bold text-[var(--color-primary)] dark:text-white mb-5">تتبع الطلب</h2>
+          <ol class="relative border-s border-[var(--color-border)] ps-6 space-y-6" aria-label="مراحل الطلب">
+            {% for step in order.timeline %}
+            <li class="relative">
+              <div class="absolute -start-3 top-0.5 w-5 h-5 rounded-full border-2 {{ step.completed ? 'bg-[var(--color-primary)] border-[var(--color-primary)]' : 'bg-white dark:bg-gray-800 border-[var(--color-border)]' }} flex items-center justify-center">
+                {% if step.completed %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                {% endif %}
+              </div>
+              <p class="font-semibold text-sm {{ step.completed ? 'text-[var(--color-primary)] dark:text-white' : 'text-[var(--color-muted)]' }}">{{ step.name }}</p>
+              {% if step.date %}<p class="text-xs text-[var(--color-muted)] mt-0.5">{{ step.date }}</p>{% endif %}
+            </li>
+            {% endfor %}
+          </ol>
+        </div>
+        {% endif %}
+      </div>
+
+      {# Order Summary Sidebar #}
+      <div class="space-y-4">
+        <div class="card-flat rounded-[var(--border-radius-card)] p-5">
+          <h2 class="font-bold text-[var(--color-primary)] dark:text-white mb-4">ملخص الطلب</h2>
+          <div class="space-y-2.5 text-sm">
+            <div class="flex justify-between"><span class="text-[var(--color-muted)]">المجموع الجزئي</span><span>{{ order.subtotal.formatted }}</span></div>
+            {% if order.discount.amount > 0 %}<div class="flex justify-between text-green-600"><span>الخصم</span><span>− {{ order.discount.formatted }}</span></div>{% endif %}
+            {% if order.tax %}<div class="flex justify-between"><span class="text-[var(--color-muted)]">الضريبة</span><span>{{ order.tax.formatted }}</span></div>{% endif %}
+            <div class="flex justify-between"><span class="text-[var(--color-muted)]">الشحن</span><span>{{ order.shipping.formatted }}</span></div>
+            <div class="flex justify-between font-bold pt-2 border-t border-[var(--color-border)] text-base">
+              <span>الإجمالي</span>
+              <span class="text-[var(--color-primary)] dark:text-white">{{ order.total.formatted }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-flat rounded-[var(--border-radius-card)] p-5">
+          <h2 class="font-bold text-[var(--color-primary)] dark:text-white mb-3">عنوان التوصيل</h2>
+          {% if order.shipping_address %}
+          <div class="text-sm text-[var(--color-muted)] space-y-1">
+            <p class="font-medium text-[var(--color-text)]">{{ order.shipping_address.name }}</p>
+            <p>{{ order.shipping_address.street }}</p>
+            <p>{{ order.shipping_address.city }}، {{ order.shipping_address.country }}</p>
+            {% if order.shipping_address.phone %}<p dir="ltr">{{ order.shipping_address.phone }}</p>{% endif %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="card-flat rounded-[var(--border-radius-card)] p-5">
+          <h2 class="font-bold text-[var(--color-primary)] dark:text-white mb-3">طريقة الدفع</h2>
+          <p class="text-sm text-[var(--color-muted)]">{{ order.payment_method }}</p>
+        </div>
+
+        {% if order.can_cancel %}
+        <button class="btn-danger btn btn-full" data-cancel-order="{{ order.id }}">إلغاء الطلب</button>
+        {% endif %}
+        {% if order.can_reorder %}
+        <a href="{{ order.reorder_url }}" class="btn-outline btn btn-full">إعادة الطلب</a>
+        {% endif %}
+        <a href="{{ order.invoice_url }}" class="btn-ghost btn btn-full flex items-center justify-center gap-2" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          تحميل الفاتورة
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

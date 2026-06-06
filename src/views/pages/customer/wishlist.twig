@@ -1,0 +1,39 @@
+{% extends "layouts.master" %}
+{% set page_title = 'قائمة المفضلة' %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-800/50 border-b border-[var(--color-border)]">
+  <div class="container mx-auto px-4 py-6">
+    <nav class="breadcrumb"><div class="breadcrumb__item"><a href="{{ store.url }}" class="breadcrumb__link">الرئيسية</a></div><div class="breadcrumb__item" aria-current="page">المفضلة</div></nav>
+    <h1 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] dark:text-white mt-2">قائمة المفضلة</h1>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container mx-auto px-4">
+    {% if wishlist.items %}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+      {% for product in wishlist.items %}
+      <div class="relative" data-animate>
+        {% include 'components/partials/product-card' with { product: product } %}
+        <button
+          class="absolute top-3 end-3 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-red-600 transition-colors z-20"
+          data-remove-wishlist="{{ product.id }}"
+          aria-label="إزالة من المفضلة"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state py-24">
+      <svg xmlns="http://www.w3.org/2000/svg" class="empty-state__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+      <h2 class="empty-state__title">قائمة المفضلة فارغة</h2>
+      <p class="empty-state__desc">لم تضف أي منتجات إلى مفضلتك بعد. استعرض منتجاتنا واضغط على أيقونة القلب لحفظها.</p>
+      <a href="{{ store.products_url }}" class="btn-primary btn">استعرض المنتجات</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
