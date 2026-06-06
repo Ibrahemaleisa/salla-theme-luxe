@@ -1,0 +1,110 @@
+{# Luxe Categories Component #}
+{% set title = component.fields.title | default('تسوق حسب التصنيف') %}
+{% set subtitle = component.fields.subtitle | default('اكتشف تشكيلتنا المتنوعة') %}
+{% set style = component.fields.style | default('grid') %}
+{% set count = component.fields.count | default(8) %}
+
+<section class="section">
+  <div class="container mx-auto px-4">
+    <div class="section-header" data-animate>
+      <p class="section-header__subtitle">{{ subtitle }}</p>
+      <h2 class="section-header__title">{{ title }}</h2>
+      <div class="section-header__divider"></div>
+    </div>
+
+    {% if style == 'slider' %}
+    {# Slider Style #}
+    <div class="swiper" data-swiper="categories">
+      <div class="swiper-wrapper">
+        {% for category in store.categories | slice(0, count) %}
+        <div class="swiper-slide">
+          {% include 'components/partials/category-card' with { category: category } %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% elseif style == 'masonry' %}
+    {# Masonry Style #}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {% for category in store.categories | slice(0, count) %}
+      <a
+        href="{{ category.url }}"
+        class="relative rounded-[var(--border-radius-card)] overflow-hidden group cursor-pointer
+        {% if loop.index == 1 %}md:col-span-2 md:row-span-2{% endif %}"
+        style="{% if loop.index == 1 %}aspect-ratio: 1/1;{% else %}aspect-ratio: 1/1;{% endif %}"
+        data-animate
+      >
+        {% if category.image %}
+        <img
+          src="{{ category.image }}"
+          alt="{{ category.name }}"
+          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          loading="lazy"
+        >
+        {% else %}
+        <div class="w-full h-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)]"></div>
+        {% endif %}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+        <div class="absolute inset-0 flex flex-col items-center justify-end p-4 text-white">
+          <h3 class="font-bold text-sm md:text-base text-center">{{ category.name }}</h3>
+          {% if category.products_count %}
+          <p class="text-xs text-white/70 mt-1">{{ category.products_count }} منتج</p>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    {# Grid Style (Default) #}
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-{{ count > 6 ? '8' : count }} gap-4 md:gap-6">
+      {% for category in store.categories | slice(0, count) %}
+      <a
+        href="{{ category.url }}"
+        class="group flex flex-col items-center text-center gap-3 p-4 rounded-[var(--border-radius-card)] hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300"
+        data-animate
+      >
+        {# Category Image #}
+        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-700 flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
+          {% if category.image %}
+          <img
+            src="{{ category.image }}"
+            alt="{{ category.name }}"
+            class="w-full h-full object-cover"
+            loading="lazy"
+          >
+          {% else %}
+          <div class="w-full h-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+          </div>
+          {% endif %}
+        </div>
+
+        {# Category Name #}
+        <div>
+          <h3 class="text-xs md:text-sm font-semibold leading-tight group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
+            {{ category.name }}
+          </h3>
+          {% if category.products_count %}
+          <p class="text-xs text-[var(--color-muted)] mt-0.5">{{ category.products_count }}</p>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {# View All #}
+    <div class="text-center mt-10">
+      <a href="{{ store.categories_url }}" class="btn-outline btn">
+        عرض كل التصنيفات
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
