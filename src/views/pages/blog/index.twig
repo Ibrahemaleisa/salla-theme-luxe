@@ -1,0 +1,91 @@
+{% extends "layouts.master" %}
+{% set page_title = 'المدونة' %}
+{% set page_description = 'آخر المقالات والأخبار من ' ~ store.name %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-800/50 border-b border-[var(--color-border)]">
+  <div class="container mx-auto px-4 py-6">
+    <nav class="breadcrumb"><div class="breadcrumb__item"><a href="{{ store.url }}" class="breadcrumb__link">الرئيسية</a></div><div class="breadcrumb__item" aria-current="page">المدونة</div></nav>
+    <h1 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] dark:text-white mt-2">المدونة</h1>
+    <p class="text-[var(--color-muted)] mt-1">أحدث المقالات والأخبار</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container mx-auto px-4">
+    {% if articles.items %}
+    {# Featured Article #}
+    {% set featured = articles.items[0] %}
+    <a href="{{ featured.url }}" class="group block mb-10 md:mb-14 card-flat rounded-[var(--border-radius-card)] overflow-hidden hover:shadow-lg transition-shadow" data-animate>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+        <div class="aspect-video md:aspect-auto overflow-hidden">
+          {% if featured.image %}
+          <img src="{{ featured.image }}" alt="{{ featured.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
+          {% else %}
+          <div class="w-full h-full bg-gradient-primary min-h-[250px]"></div>
+          {% endif %}
+        </div>
+        <div class="p-6 md:p-8 flex flex-col justify-center">
+          {% if featured.category %}<span class="badge badge-primary mb-3 self-start">{{ featured.category }}</span>{% endif %}
+          <h2 class="text-xl md:text-2xl font-black text-[var(--color-primary)] dark:text-white leading-tight mb-3 group-hover:text-[var(--color-secondary)] transition-colors">{{ featured.title }}</h2>
+          {% if featured.excerpt %}<p class="text-[var(--color-muted)] text-sm leading-relaxed line-clamp-3 mb-4">{{ featured.excerpt }}</p>{% endif %}
+          <div class="flex items-center gap-3 text-xs text-[var(--color-muted)]">
+            {% if featured.author %}<span>{{ featured.author }}</span><span>·</span>{% endif %}
+            <span>{{ featured.date }}</span>
+            {% if featured.read_time %}<span>·</span><span>{{ featured.read_time }} دقائق للقراءة</span>{% endif %}
+          </div>
+          <span class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] group-hover:gap-3 transition-all">
+            اقرأ المقال
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    {# Articles Grid #}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for article in articles.items | slice(1) %}
+      <article class="card-flat rounded-[var(--border-radius-card)] overflow-hidden group hover:shadow-lg transition-shadow" data-animate>
+        <a href="{{ article.url }}" class="block aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
+          {% if article.image %}
+          <img src="{{ article.image }}" alt="{{ article.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+          {% else %}
+          <div class="w-full h-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)]"></div>
+          {% endif %}
+        </a>
+        <div class="p-5">
+          {% if article.category %}<span class="badge badge-gray mb-2">{{ article.category }}</span>{% endif %}
+          <h2 class="font-bold text-base leading-snug mb-2 line-clamp-2">
+            <a href="{{ article.url }}" class="hover:text-[var(--color-primary)] transition-colors">{{ article.title }}</a>
+          </h2>
+          {% if article.excerpt %}<p class="text-sm text-[var(--color-muted)] line-clamp-2 mb-3">{{ article.excerpt }}</p>{% endif %}
+          <div class="flex items-center justify-between text-xs text-[var(--color-muted)]">
+            <span>{{ article.date }}</span>
+            {% if article.read_time %}<span>{{ article.read_time }} د قراءة</span>{% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    {% if articles.pages > 1 %}
+    <nav class="pagination mt-12" aria-label="ترقيم الصفحات">
+      {% if articles.prev_page %}<a href="{{ articles.prev_page }}" class="pagination__item">السابق</a>{% endif %}
+      {% for p in 1..articles.pages %}
+      {% if p == articles.current_page %}<span class="pagination__item pagination__item--active" aria-current="page">{{ p }}</span>
+      {% else %}<a href="{{ articles.page_url(p) }}" class="pagination__item">{{ p }}</a>{% endif %}
+      {% endfor %}
+      {% if articles.next_page %}<a href="{{ articles.next_page }}" class="pagination__item">التالي</a>{% endif %}
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state py-24">
+      <svg xmlns="http://www.w3.org/2000/svg" class="empty-state__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+      <h2 class="empty-state__title">لا توجد مقالات</h2>
+      <p class="empty-state__desc">لم يتم نشر أي مقالات بعد.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

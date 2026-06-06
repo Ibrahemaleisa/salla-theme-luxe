@@ -1,0 +1,61 @@
+{% extends "layouts.master" %}
+{% set page_title = 'العلامات التجارية' %}
+{% set page_description = 'تصفح جميع العلامات التجارية المتاحة في ' ~ store.name %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-800/50 border-b border-[var(--color-border)]">
+  <div class="container mx-auto px-4 py-6">
+    <nav class="breadcrumb"><div class="breadcrumb__item"><a href="{{ store.url }}" class="breadcrumb__link">الرئيسية</a></div><div class="breadcrumb__item" aria-current="page">العلامات التجارية</div></nav>
+    <h1 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] dark:text-white mt-2">العلامات التجارية</h1>
+    {% if store.brands %}<p class="text-[var(--color-muted)] mt-1">{{ store.brands | length }} علامة تجارية</p>{% endif %}
+  </div>
+</div>
+
+<section class="section">
+  <div class="container mx-auto px-4">
+    {% if store.brands %}
+
+    {# Alphabetical Index #}
+    <div class="flex flex-wrap gap-2 mb-8" aria-label="تصفية أبجدية">
+      <a href="#all" class="px-3 py-1.5 text-sm rounded-[var(--border-radius)] bg-[var(--color-primary)] text-white font-medium">الكل</a>
+      {% set letters = ['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','هـ','و','ي'] %}
+      {% for letter in letters %}
+      <a href="#{{ letter }}" class="px-3 py-1.5 text-sm rounded-[var(--border-radius)] border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors">{{ letter }}</a>
+      {% endfor %}
+    </div>
+
+    {# Brands Grid #}
+    <div id="all" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      {% for brand in store.brands %}
+      <a
+        href="{{ brand.url }}"
+        class="card-flat rounded-[var(--border-radius-card)] p-5 flex flex-col items-center text-center gap-3 group hover:border-[var(--color-primary)] transition-all duration-200"
+        data-animate
+      >
+        <div class="w-20 h-20 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-700 flex items-center justify-center p-2 group-hover:scale-105 transition-transform duration-300">
+          {% if brand.image %}
+          <img src="{{ brand.image }}" alt="{{ brand.name }}" class="max-w-full max-h-full object-contain" loading="lazy">
+          {% else %}
+          <span class="text-2xl font-black text-[var(--color-primary)] opacity-40">{{ brand.name | first | upper }}</span>
+          {% endif %}
+        </div>
+        <div>
+          <p class="font-semibold text-sm group-hover:text-[var(--color-primary)] transition-colors">{{ brand.name }}</p>
+          {% if brand.products_count %}
+          <p class="text-xs text-[var(--color-muted)] mt-0.5">{{ brand.products_count }} منتج</p>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state py-24">
+      <svg xmlns="http://www.w3.org/2000/svg" class="empty-state__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+      <h2 class="empty-state__title">لا توجد علامات تجارية</h2>
+      <p class="empty-state__desc">لا توجد علامات تجارية متاحة حالياً.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

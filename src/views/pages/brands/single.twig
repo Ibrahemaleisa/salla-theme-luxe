@@ -1,0 +1,58 @@
+{% extends "layouts.master" %}
+{% set page_title = brand.name %}
+{% set page_description = brand.description | default('تصفح منتجات ' ~ brand.name) | striptags | truncate(160) %}
+{% set og_image = brand.image %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-800/50 border-b border-[var(--color-border)]">
+  <div class="container mx-auto px-4 py-6">
+    <nav class="breadcrumb"><div class="breadcrumb__item"><a href="{{ store.url }}" class="breadcrumb__link">الرئيسية</a></div><div class="breadcrumb__item"><a href="{{ store.brands_url }}" class="breadcrumb__link">العلامات التجارية</a></div><div class="breadcrumb__item" aria-current="page">{{ brand.name }}</div></nav>
+  </div>
+</div>
+
+{# Brand Hero #}
+<div class="bg-white dark:bg-[var(--color-surface)] border-b border-[var(--color-border)] py-10">
+  <div class="container mx-auto px-4 flex flex-col sm:flex-row items-center gap-6">
+    {% if brand.image %}
+    <div class="w-24 h-24 rounded-2xl overflow-hidden border border-[var(--color-border)] bg-gray-50 dark:bg-gray-700 flex items-center justify-center p-2 flex-shrink-0">
+      <img src="{{ brand.image }}" alt="{{ brand.name }}" class="max-w-full max-h-full object-contain">
+    </div>
+    {% endif %}
+    <div class="text-center sm:text-start">
+      <h1 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] dark:text-white">{{ brand.name }}</h1>
+      {% if brand.description %}<p class="text-[var(--color-muted)] mt-2 max-w-xl text-sm">{{ brand.description | striptags | truncate(200) }}</p>{% endif %}
+      {% if products.total %}<p class="text-sm font-medium text-[var(--color-primary)] mt-2">{{ products.total }} منتج</p>{% endif %}
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container mx-auto px-4">
+    {% if products.items %}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      {% for product in products.items %}
+      <div data-animate>{% include 'components/partials/product-card' with { product: product } %}</div>
+      {% endfor %}
+    </div>
+
+    {% if products.pages > 1 %}
+    <nav class="pagination mt-10">
+      {% if products.prev_page %}<a href="{{ products.prev_page }}" class="pagination__item">السابق</a>{% endif %}
+      {% for p in 1..products.pages %}
+      {% if p == products.current_page %}<span class="pagination__item pagination__item--active">{{ p }}</span>
+      {% else %}<a href="{{ products.page_url(p) }}" class="pagination__item">{{ p }}</a>{% endif %}
+      {% endfor %}
+      {% if products.next_page %}<a href="{{ products.next_page }}" class="pagination__item">التالي</a>{% endif %}
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state py-24">
+      <svg xmlns="http://www.w3.org/2000/svg" class="empty-state__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      <h2 class="empty-state__title">لا توجد منتجات</h2>
+      <p class="empty-state__desc">لا توجد منتجات متاحة لهذه العلامة التجارية.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
