@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="{{ store.language }}" dir="{{ store.direction }}"
+  data-primary-color="{{ theme.settings.get('primary_color') }}"
+  data-secondary-color="{{ theme.settings.get('secondary_color') }}"
+  data-accent-color="{{ theme.settings.get('accent_color') }}"
+  data-text-color="{{ theme.settings.get('text_color') }}"
+  data-bg-color="{{ theme.settings.get('bg_color') }}"
+  data-font="{{ theme.settings.get('font_family') }}"
+  data-radius="{{ theme.settings.get('border_radius') }}"
+  data-dark-mode="{{ theme.settings.get('dark_mode') }}"
+  {% if theme.settings.get('dark_mode') %}class="dark"{% endif %}
+>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  {% hook 'head:start' %}
+
+  {# SEO Meta Tags #}
+  <title>{{ page_title }} | {{ store.name }}</title>
+  <meta name="description" content="{{ page_description | default(store.description) }}">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{{ current_url }}">
+
+  {# Open Graph #}
+  <meta property="og:type" content="{{ og_type | default('website') }}">
+  <meta property="og:site_name" content="{{ store.name }}">
+  <meta property="og:title" content="{{ page_title }} | {{ store.name }}">
+  <meta property="og:description" content="{{ page_description | default(store.description) }}">
+  <meta property="og:url" content="{{ current_url }}">
+  <meta property="og:locale" content="{{ store.language }}_SA">
+  {% if og_image %}<meta property="og:image" content="{{ og_image }}">{% endif %}
+
+  {# Twitter Card #}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page_title }} | {{ store.name }}">
+  <meta name="twitter:description" content="{{ page_description | default(store.description) }}">
+
+  {# Favicon #}
+  {% if theme.settings.get('favicon') %}
+    <link rel="icon" type="image/x-icon" href="{{ theme.settings.get('favicon') }}">
+    <link rel="apple-touch-icon" href="{{ theme.settings.get('favicon') }}">
+  {% else %}
+    <link rel="icon" type="image/x-icon" href="{{ 'images/favicon.ico' | asset }}">
+  {% endif %}
+
+  {# Preconnect & Fonts #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  {% set font = theme.settings.get('font_family') | default('tajawal') %}
+  {% if font == 'tajawal' %}
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  {% elseif font == 'cairo' %}
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  {% elseif font == 'almarai' %}
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+  {% elseif font == 'noto-kufi' %}
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  {% endif %}
+
+  {# Swiper CSS #}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  {# Theme CSS #}
+  <link rel="stylesheet" href="{{ 'css/theme.css' | asset }}">
+
+  {% block styles %}{% endblock %}
+
+  {# Inline Custom Colors #}
+  <style>
+    :root {
+      --color-primary: {{ theme.settings.get('primary_color') | default('#1a1a2e') }};
+      --color-secondary: {{ theme.settings.get('secondary_color') | default('#e2b96f') }};
+      --color-accent: {{ theme.settings.get('accent_color') | default('#c9a84c') }};
+      --color-text: {{ theme.settings.get('text_color') | default('#1f2937') }};
+      --color-bg: {{ theme.settings.get('bg_color') | default('#ffffff') }};
+    }
+    {% if theme.settings.get('custom_css') %}
+      {{ theme.settings.get('custom_css') | raw }}
+    {% endif %}
+  </style>
+
+  {% block head %}{% endblock %}
+  {% hook 'head' %}
+  {% hook 'head:end' %}
+</head>
+
+<body
+  class="bg-[var(--color-bg)] text-[var(--color-text)] antialiased"
+  data-primary-color="{{ theme.settings.get('primary_color') }}"
+  data-secondary-color="{{ theme.settings.get('secondary_color') }}"
+  data-accent-color="{{ theme.settings.get('accent_color') }}"
+  data-font="{{ theme.settings.get('font_family') | default('tajawal') }}"
+  data-radius="{{ theme.settings.get('border_radius') | default('medium') }}"
+  data-dark-mode="{{ theme.settings.get('dark_mode') ? 'true' : 'false' }}"
+>
+
+{# Skip Navigation for Accessibility #}
+<a href="#main-content" data-skip-to-main class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 btn-primary btn-sm z-[9999]">
+  تخطى إلى المحتوى الرئيسي
+</a>
+
+{% hook 'body:start' %}
+
+{# Toast Container #}
+<div class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+{# Topbar #}
+{% if theme.settings.get('show_topbar') %}
+  {% include 'components/header/topbar' %}
+{% endif %}
+
+{# Header #}
+{% include 'components/header/header' %}
+
+{# Mobile Menu Overlay #}
+<div data-mobile-menu-overlay class="overlay hidden" aria-hidden="true"></div>
+
+{# Cart Overlay #}
+<div data-cart-overlay class="overlay hidden" aria-hidden="true"></div>
+
+{# Mobile Menu #}
+{% include 'components/header/mobile-menu' %}
+
+{# Cart Drawer #}
+{% include 'components/partials/cart-drawer' %}
+
+{# Search Box #}
+{% include 'components/header/search-box' %}
+
+{# Main Content #}
+<main id="main-content" tabindex="-1">
+  {% block content %}{% endblock %}
+</main>
+
+{# Newsletter #}
+{% if theme.settings.get('show_newsletter') %}
+  {% include 'components/footer/newsletter' %}
+{% endif %}
+
+{# Footer #}
+{% include 'components/footer/footer' %}
+
+{# Back to Top #}
+{% if theme.settings.get('show_back_to_top') %}
+<button
+  data-back-to-top
+  class="fixed bottom-6 end-6 z-40 w-12 h-12 rounded-full bg-[var(--color-primary)] text-white shadow-lg flex items-center justify-center opacity-0 invisible pointer-events-none transition-all duration-300 hover:bg-[var(--color-secondary)] hover:text-[var(--color-primary)] [&.is-visible]:opacity-100 [&.is-visible]:visible [&.is-visible]:pointer-events-auto"
+  aria-label="العودة للأعلى"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+  </svg>
+</button>
+{% endif %}
+
+{# WhatsApp Button #}
+{% if theme.settings.get('show_whatsapp') and theme.settings.get('whatsapp_number') %}
+<a
+  href="https://wa.me/{{ theme.settings.get('whatsapp_number') | replace({'+': '', ' ': '', '-': ''}) }}"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="fixed bottom-20 end-6 z-40 w-12 h-12 rounded-full bg-green-500 text-white shadow-lg flex items-center justify-center hover:bg-green-600 transition-colors"
+  aria-label="تواصل عبر واتساب"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+{% endif %}
+
+{% hook 'body:end' %}
+
+{# Scripts #}
+<script src="{{ 'js/theme.js' | asset }}" defer></script>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>
