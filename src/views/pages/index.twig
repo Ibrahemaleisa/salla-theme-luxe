@@ -1,0 +1,26 @@
+{% extends "layouts.master" %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "{{ store.name }}",
+  "url": "{{ store.url }}",
+  "description": "{{ store.description | escape }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{ store.url }}/search?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+{# Dynamic Home Components via Twilight Engine #}
+{% component home %}
+{% endblock %}

@@ -1,0 +1,341 @@
+{% extends "layouts.master" %}
+
+{% set og_type = 'product' %}
+{% set og_image = product.thumbnail %}
+{% set page_title = product.name %}
+{% set page_description = product.description | striptags | truncate(160) %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ product.name | escape }}",
+  "image": "{{ product.thumbnail }}",
+  "description": "{{ product.description | striptags | truncate(200) | escape }}",
+  {% if product.brand %}"brand": { "@type": "Brand", "name": "{{ product.brand.name | escape }}" },{% endif %}
+  "offers": {
+    "@type": "Offer",
+    "price": "{{ product.price.amount }}",
+    "priceCurrency": "{{ store.currency }}",
+    "availability": "{% if product.is_out_of_stock %}https://schema.org/OutOfStock{% else %}https://schema.org/InStock{% endif %}",
+    "url": "{{ current_url }}"
+  }
+  {% if product.rating %},
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ product.rating.average }}",
+    "reviewCount": "{{ product.rating.count }}"
+  }
+  {% endif %}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+{# Breadcrumb #}
+{% if theme.settings.get('show_breadcrumb') %}
+<div class="bg-gray-50 dark:bg-gray-800/50 border-b border-[var(--color-border)]">
+  <div class="container mx-auto px-4">
+    <nav class="breadcrumb" aria-label="مسار التنقل">
+      <div class="breadcrumb__item">
+        <a href="{{ store.url }}" class="breadcrumb__link">الرئيسية</a>
+      </div>
+      {% if product.category %}
+      <div class="breadcrumb__item">
+        <a href="{{ product.category.url }}" class="breadcrumb__link">{{ product.category.name }}</a>
+      </div>
+      {% endif %}
+      <div class="breadcrumb__item" aria-current="page">{{ product.name | truncate(40) }}</div>
+    </nav>
+  </div>
+</div>
+{% endif %}
+
+{# Product Main Section #}
+<section class="section" aria-label="تفاصيل المنتج">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-16">
+
+      {# Product Images #}
+      <div class="lg:sticky lg:top-24 h-fit">
+        {# Main Slider #}
+        <div class="swiper rounded-[var(--border-radius-card)] overflow-hidden mb-3 bg-gray-50 dark:bg-gray-800" data-swiper="product-images">
+          <div class="swiper-wrapper">
+            {% if product.images %}
+            {% for image in product.images %}
+            <div class="swiper-slide">
+              <div class="aspect-square overflow-hidden">
+                <img
+                  src="{{ image.url }}"
+                  alt="{{ product.name }} - صورة {{ loop.index }}"
+                  class="w-full h-full object-cover cursor-zoom-in"
+                  data-product-image
+                  {% if loop.first %}loading="eager"{% else %}loading="lazy"{% endif %}
+                >
+              </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="swiper-slide">
+              <div class="aspect-square bg-gray-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          <button class="swiper-button-prev" aria-label="الصورة السابقة"></button>
+          <button class="swiper-button-next" aria-label="الصورة التالية"></button>
+        </div>
+
+        {# Thumbnails #}
+        {% if product.images | length > 1 %}
+        <div class="swiper" data-swiper="product-thumbs">
+          <div class="swiper-wrapper">
+            {% for image in product.images %}
+            <div class="swiper-slide cursor-pointer rounded-[var(--border-radius)] overflow-hidden border-2 border-transparent [.swiper-slide-thumb-active_&]:border-[var(--color-primary)]">
+              <div class="aspect-square">
+                <img
+                  src="{{ image.url }}"
+                  alt="{{ product.name }} - مصغرة {{ loop.index }}"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                >
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      {# Product Info #}
+      <div class="flex flex-col gap-6">
+
+        {# Brand & Status #}
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          {% if product.brand %}
+          <a href="{{ product.brand.url }}" class="text-sm font-semibold text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors uppercase tracking-wide">
+            {{ product.brand.name }}
+          </a>
+          {% endif %}
+          <div class="flex items-center gap-2">
+            {% if product.is_new %}
+            <span class="badge badge-primary">جديد</span>
+            {% endif %}
+            {% if product.is_out_of_stock %}
+            <span class="badge badge-danger">نفذ المخزون</span>
+            {% else %}
+            <span class="badge badge-success">متوفر</span>
+            {% endif %}
+          </div>
+        </div>
+
+        {# Product Name #}
+        <h1 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] dark:text-white leading-tight">
+          {{ product.name }}
+        </h1>
+
+        {# Rating & Reviews #}
+        {% if product.rating %}
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-0.5" aria-label="التقييم: {{ product.rating.average }} من 5">
+            {% for i in 1..5 %}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {{ i <= product.rating.average ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            {% endfor %}
+          </div>
+          <span class="text-sm text-[var(--color-muted)]">{{ product.rating.average }}/5 ({{ product.rating.count }} تقييم)</span>
+          <a href="#reviews" class="text-sm text-[var(--color-primary)] underline hover:no-underline">اقرأ التقييمات</a>
+        </div>
+        {% endif %}
+
+        {# Price #}
+        <div class="flex items-baseline gap-3 flex-wrap">
+          <span class="text-3xl font-black text-[var(--color-primary)] dark:text-white">{{ product.price.formatted }}</span>
+          {% if product.old_price %}
+          <span class="text-lg text-[var(--color-muted)] line-through">{{ product.old_price.formatted }}</span>
+          <span class="badge badge-danger text-sm">وفر {{ product.discount_percent }}%</span>
+          {% endif %}
+        </div>
+
+        {# Short Description #}
+        {% if product.short_description %}
+        <div class="text-[var(--color-muted)] text-sm leading-relaxed border-t border-[var(--color-border)] pt-4">
+          {{ product.short_description }}
+        </div>
+        {% endif %}
+
+        {# Product Options (Salla Dynamic Components) #}
+        {% component 'product.options' %}
+
+        {# Quantity #}
+        {% if not product.is_out_of_stock %}
+        <div class="flex items-center gap-4">
+          <label class="text-sm font-semibold">الكمية:</label>
+          <div class="flex items-center border border-[var(--color-border)] rounded-[var(--border-radius)] overflow-hidden" data-qty-control>
+            <button
+              data-qty-dec
+              class="w-11 h-11 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 text-lg font-bold transition-colors"
+              aria-label="تقليل الكمية"
+            >−</button>
+            <input
+              data-qty-input
+              id="product-qty"
+              type="number"
+              value="1"
+              min="1"
+              max="{{ product.quantity }}"
+              class="w-16 h-11 text-center font-semibold border-x border-[var(--color-border)] bg-transparent outline-none"
+              aria-label="الكمية"
+            >
+            <button
+              data-qty-inc
+              class="w-11 h-11 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 text-lg font-bold transition-colors"
+              aria-label="زيادة الكمية"
+            >+</button>
+          </div>
+          {% if product.quantity %}
+          <span class="text-xs text-[var(--color-muted)]">{{ product.quantity }} قطعة متاحة</span>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {# CTA Buttons #}
+        <div class="flex flex-col sm:flex-row gap-3">
+          {% if not product.is_out_of_stock %}
+          <button
+            class="btn-primary btn btn-lg flex-1"
+            data-add-to-cart="{{ product.id }}"
+            aria-label="إضافة إلى السلة"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+            </svg>
+            إضافة إلى السلة
+          </button>
+          <a
+            href="{{ product.buy_now_url }}"
+            class="btn-outline btn btn-lg flex-1"
+          >
+            شراء الآن
+          </a>
+          {% else %}
+          {% component 'product.notify_availability' %}
+          {% endif %}
+
+          <button
+            class="btn-ghost btn-icon btn w-12 h-12"
+            :class="{ 'bg-red-50 text-red-500 border-red-200': $store.wishlist.has('{{ product.id }}') }"
+            @click="$store.wishlist.toggle('{{ product.id }}')"
+            aria-label="إضافة إلى المفضلة"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </button>
+        </div>
+
+        {# Trust Badges #}
+        <div class="grid grid-cols-3 gap-3 pt-4 border-t border-[var(--color-border)]">
+          <div class="flex flex-col items-center text-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            <span class="text-xs text-[var(--color-muted)]">دفع آمن</span>
+          </div>
+          <div class="flex flex-col items-center text-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+            <span class="text-xs text-[var(--color-muted)]">توصيل سريع</span>
+          </div>
+          <div class="flex flex-col items-center text-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <span class="text-xs text-[var(--color-muted)]">إرجاع مجاني</span>
+          </div>
+        </div>
+
+        {# Share #}
+        <div class="flex items-center gap-3 text-sm text-[var(--color-muted)]">
+          <span>مشاركة:</span>
+          <a href="https://wa.me/?text={{ product.name | url_encode }}%20{{ current_url | url_encode }}" target="_blank" rel="noopener noreferrer" class="hover:text-green-500 transition-colors" aria-label="مشاركة عبر واتساب">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+          <a href="https://twitter.com/intent/tweet?text={{ product.name | url_encode }}&url={{ current_url | url_encode }}" target="_blank" rel="noopener noreferrer" class="hover:text-black transition-colors" aria-label="مشاركة عبر تويتر">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {# Product Tabs: Description, Details, Reviews #}
+    <div class="mt-16" data-options-tabs>
+      {# Tab Buttons #}
+      <div class="flex border-b border-[var(--color-border)] overflow-x-auto scrollbar-hide">
+        <button
+          data-options-tab="description"
+          class="px-6 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 border-[var(--color-primary)] text-[var(--color-primary)] active"
+        >
+          الوصف
+        </button>
+        {% if product.details %}
+        <button
+          data-options-tab="details"
+          class="px-6 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 border-transparent text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors"
+        >
+          المواصفات
+        </button>
+        {% endif %}
+        <button
+          data-options-tab="reviews"
+          class="px-6 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 border-transparent text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors"
+          id="reviews"
+        >
+          التقييمات {% if product.rating %}({{ product.rating.count }}){% endif %}
+        </button>
+      </div>
+
+      {# Description Tab #}
+      <div data-options-panel="description" class="py-8 prose prose-sm max-w-none dark:prose-invert">
+        {% if product.description %}
+          {{ product.description | raw }}
+        {% else %}
+          <p class="text-[var(--color-muted)]">لا يوجد وصف متاح لهذا المنتج.</p>
+        {% endif %}
+      </div>
+
+      {# Details Tab #}
+      {% if product.details %}
+      <div data-options-panel="details" class="py-8 hidden">
+        <div class="max-w-2xl">
+          <table class="w-full text-sm">
+            <tbody>
+              {% for detail in product.details %}
+              <tr class="border-b border-[var(--color-border)]">
+                <th class="py-3 pe-4 text-start font-semibold text-[var(--color-muted)] w-1/3">{{ detail.name }}</th>
+                <td class="py-3">{{ detail.value }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+
+      {# Reviews Tab #}
+      <div data-options-panel="reviews" class="py-8 hidden">
+        {% component 'product.comments' %}
+      </div>
+    </div>
+
+    {# Similar Products #}
+    {% component 'product.similar' %}
+  </div>
+</section>
+{% endblock %}

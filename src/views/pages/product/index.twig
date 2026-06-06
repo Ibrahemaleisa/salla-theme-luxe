@@ -1,0 +1,169 @@
+{% extends "layouts.master" %}
+
+{% set page_title = category.name | default(page.title | default('المنتجات')) %}
+{% set page_description = category.description | default('تصفح منتجاتنا المتميزة') | striptags | truncate(160) %}
+
+{% block content %}
+{# Page Hero #}
+<div class="bg-gray-50 dark:bg-gray-800/50 border-b border-[var(--color-border)]">
+  <div class="container mx-auto px-4 py-8">
+    {% if theme.settings.get('show_breadcrumb') %}
+    <nav class="breadcrumb mb-3" aria-label="مسار التنقل">
+      <div class="breadcrumb__item">
+        <a href="{{ store.url }}" class="breadcrumb__link">الرئيسية</a>
+      </div>
+      {% if category.parent %}
+      <div class="breadcrumb__item">
+        <a href="{{ category.parent.url }}" class="breadcrumb__link">{{ category.parent.name }}</a>
+      </div>
+      {% endif %}
+      <div class="breadcrumb__item" aria-current="page">
+        {{ category.name | default('المنتجات') }}
+      </div>
+    </nav>
+    {% endif %}
+
+    <div class="flex items-start justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] dark:text-white">
+          {{ category.name | default(page_title) }}
+        </h1>
+        {% if products.total %}
+        <p class="text-sm text-[var(--color-muted)] mt-1">{{ products.total }} منتج</p>
+        {% endif %}
+      </div>
+
+      {# Sort Select #}
+      <div class="flex items-center gap-3">
+        <label for="sort-select" class="text-sm font-medium whitespace-nowrap">ترتيب حسب:</label>
+        <select
+          id="sort-select"
+          class="form-select text-sm py-2"
+          onchange="window.location.href = this.value"
+          aria-label="ترتيب المنتجات"
+        >
+          <option value="{{ current_url }}?sort=latest" {{ request.sort == 'latest' ? 'selected' : '' }}>الأحدث</option>
+          <option value="{{ current_url }}?sort=price_asc" {{ request.sort == 'price_asc' ? 'selected' : '' }}>السعر: من الأقل</option>
+          <option value="{{ current_url }}?sort=price_desc" {{ request.sort == 'price_desc' ? 'selected' : '' }}>السعر: من الأعلى</option>
+          <option value="{{ current_url }}?sort=name_asc" {{ request.sort == 'name_asc' ? 'selected' : '' }}>الاسم: أ-ي</option>
+          <option value="{{ current_url }}?sort=best_selling" {{ request.sort == 'best_selling' ? 'selected' : '' }}>الأكثر مبيعاً</option>
+          <option value="{{ current_url }}?sort=top_rated" {{ request.sort == 'top_rated' ? 'selected' : '' }}>الأعلى تقييماً</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container mx-auto px-4">
+    <div class="flex gap-8">
+
+      {# Filter Sidebar #}
+      <aside class="hidden lg:block w-64 flex-shrink-0" aria-label="فلاتر البحث">
+        <div class="sticky top-24">
+          {% include 'pages/partials/filters' %}
+        </div>
+      </aside>
+
+      {# Products Grid #}
+      <div class="flex-1 min-w-0">
+
+        {# Mobile Filter Toggle #}
+        <div class="flex items-center justify-between mb-6 lg:hidden">
+          <button
+            data-filter-toggle
+            class="btn-outline btn-sm btn flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+            </svg>
+            تصفية
+          </button>
+
+          {# Grid Toggle #}
+          <div class="flex items-center gap-1 border border-[var(--color-border)] rounded-[var(--border-radius)] p-1">
+            {% set cols_mobile = theme.settings.get('products_per_row_mobile') | default('2') %}
+            <button
+              onclick="document.getElementById('products-grid').className = 'grid grid-cols-1 gap-4 md:gap-6'"
+              class="p-1.5 rounded text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors"
+              aria-label="عمود واحد"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a1 1 0 011-1h16a1 1 0 010 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h16a1 1 0 010 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h16a1 1 0 010 2H4a1 1 0 01-1-1z"/></svg>
+            </button>
+            <button
+              onclick="document.getElementById('products-grid').className = 'grid grid-cols-2 gap-4 md:gap-6'"
+              class="p-1.5 rounded text-[var(--color-primary)] transition-colors"
+              aria-label="عمودان"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        {# Mobile Filters #}
+        <div data-filter-sidebar class="hidden lg:hidden mb-6">
+          {% include 'pages/partials/filters' %}
+        </div>
+
+        {% if products.items %}
+        {# Products Grid #}
+        {% set cols_desktop = theme.settings.get('products_per_row_desktop') | default('4') %}
+        {% set cols_mobile = theme.settings.get('products_per_row_mobile') | default('2') %}
+        <div
+          id="products-grid"
+          class="grid grid-cols-{{ cols_mobile }} md:grid-cols-3 lg:grid-cols-{{ cols_desktop }} gap-4 md:gap-6"
+        >
+          {% for product in products.items %}
+          <div data-animate>
+            {% include 'components/partials/product-card' with { product: product } %}
+          </div>
+          {% endfor %}
+        </div>
+
+        {# Pagination #}
+        {% if products.pages > 1 %}
+        <nav class="pagination mt-10" aria-label="ترقيم الصفحات">
+          {% if products.prev_page %}
+          <a href="{{ products.prev_page }}" class="pagination__item" aria-label="الصفحة السابقة">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </a>
+          {% endif %}
+
+          {% for page_num in 1..products.pages %}
+            {% if page_num == products.current_page %}
+            <span class="pagination__item pagination__item--active" aria-current="page" aria-label="الصفحة الحالية {{ page_num }}">{{ page_num }}</span>
+            {% elseif page_num == 1 or page_num == products.pages or (page_num >= products.current_page - 2 and page_num <= products.current_page + 2) %}
+            <a href="{{ products.page_url(page_num) }}" class="pagination__item" aria-label="الصفحة {{ page_num }}">{{ page_num }}</a>
+            {% elseif page_num == products.current_page - 3 or page_num == products.current_page + 3 %}
+            <span class="pagination__item pagination__item--disabled">…</span>
+            {% endif %}
+          {% endfor %}
+
+          {% if products.next_page %}
+          <a href="{{ products.next_page }}" class="pagination__item" aria-label="الصفحة التالية">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+          {% endif %}
+        </nav>
+        {% endif %}
+
+        {% else %}
+        {# Empty State #}
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" class="empty-state__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+          <h2 class="empty-state__title">لا توجد منتجات</h2>
+          <p class="empty-state__desc">لا توجد منتجات متاحة حالياً في هذا التصنيف</p>
+          <a href="{{ store.url }}" class="btn-primary btn">العودة للرئيسية</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
