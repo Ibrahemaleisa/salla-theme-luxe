@@ -162,10 +162,10 @@
 </button>
 {% endif %}
 
-{# WhatsApp Button #}
-{% if theme.settings.get('show_whatsapp') and theme.settings.get('whatsapp_number') %}
+{# WhatsApp Button - رقم الواتساب من إعدادات المتجر #}
+{% if theme.settings.get('show_whatsapp') and store.whatsapp %}
 <a
-  href="https://wa.me/{{ theme.settings.get('whatsapp_number') | replace({'+': '', ' ': '', '-': ''}) }}"
+  href="https://wa.me/{{ store.whatsapp | replace({'+': '', ' ': '', '-': ''}) }}"
   target="_blank"
   rel="noopener noreferrer"
   class="fixed bottom-20 end-6 z-40 w-12 h-12 rounded-full bg-green-500 text-white shadow-lg flex items-center justify-center hover:bg-green-600 transition-colors"

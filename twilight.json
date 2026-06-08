@@ -6,7 +6,7 @@
   "repository": "https://github.com/Ibrahemaleisa/salla-theme-luxe",
   "author_email": "support@luxetheme.sa",
   "support_url": "https://github.com/Ibrahemaleisa/salla-theme-luxe/issues",
-  "description": "ثيم Luxe - ثيم سلة احترافي عصري بدعم كامل للعربية والوضع المظلم وتخصيص واسع",
+  "description": "ثيم Luxe - ثيم سلة احترافي بتصميم عصري مع دعم كامل للعربية والوضع المظلم",
   "features": [
     "mega-menu",
     "fonts",
@@ -29,13 +29,20 @@
   "settings": [
     {
       "type": "static",
-      "id": "static-header-label",
+      "id": "static-line-0",
+      "format": "line"
+    },
+    {
+      "type": "static",
       "format": "title",
-      "value": "<div style='background-color:#1a1a2e;border-radius:8px;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>إعدادات الهيدر</h6></div>"
+      "id": "static-header-title",
+      "value": "<div class='rounded-lg' style='background-color:#1a1a2e;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>إعدادات الهيدر</h6></div>",
+      "variant": "h6"
     },
     {
       "id": "header_is_sticky",
-      "label": "تثبيت القائمة الرئيسية عند التمرير",
+      "label": "تثبيت الهيدر عند التمرير للأسفل",
+      "description": "يُنصح بإلغاء التفعيل عند وجود عناصر كثيرة في القائمة",
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -46,6 +53,7 @@
     {
       "id": "header_transparent",
       "label": "هيدر شفاف في الصفحة الرئيسية",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -55,7 +63,8 @@
     },
     {
       "id": "header_centered",
-      "label": "عرض الشعار في المنتصف",
+      "label": "عرض الشعار في منتصف الهيدر",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -65,13 +74,20 @@
     },
     {
       "type": "static",
-      "id": "static-topbar-label",
+      "id": "static-line-1",
+      "format": "line"
+    },
+    {
+      "type": "static",
       "format": "title",
-      "value": "<div style='background-color:#1a1a2e;border-radius:8px;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>الشريط الإعلاني العلوي</h6></div>"
+      "id": "static-topbar-title",
+      "value": "<div class='rounded-lg' style='background-color:#1a1a2e;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>الشريط الإعلاني العلوي</h6></div>",
+      "variant": "h6"
     },
     {
       "id": "show_topbar",
       "label": "إظهار الشريط الإعلاني العلوي",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -80,24 +96,21 @@
       "selected": true
     },
     {
-      "id": "topbar_text",
-      "label": "نص الشريط الإعلاني",
-      "type": "string",
-      "icon": "sicon-format-text-alt",
-      "format": "text",
-      "required": false,
-      "value": "شحن مجاني للطلبات فوق 200 ريال | استخدم كود LUXE10 للحصول على خصم 10%",
-      "placeholder": "أدخل النص الإعلاني هنا..."
+      "type": "static",
+      "id": "static-line-2",
+      "format": "line"
     },
     {
       "type": "static",
-      "id": "static-design-label",
       "format": "title",
-      "value": "<div style='background-color:#1a1a2e;border-radius:8px;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>إعدادات التصميم</h6></div>"
+      "id": "static-design-title",
+      "value": "<div class='rounded-lg' style='background-color:#1a1a2e;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>إعدادات التصميم</h6></div>",
+      "variant": "h6"
     },
     {
       "id": "dark_mode",
       "label": "تفعيل الوضع المظلم افتراضياً",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -107,7 +120,8 @@
     },
     {
       "id": "font_cairo",
-      "label": "استخدام خط Cairo (بدلاً من Tajawal الافتراضي)",
+      "label": "استخدام خط Cairo (بديل عن Tajawal)",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -117,7 +131,8 @@
     },
     {
       "id": "font_almarai",
-      "label": "استخدام خط Almarai (بدلاً من Tajawal الافتراضي)",
+      "label": "استخدام خط Almarai (بديل عن Tajawal)",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -127,7 +142,8 @@
     },
     {
       "id": "radius_sharp",
-      "label": "زوايا حادة (بدون تدوير للأزرار والبطاقات)",
+      "label": "زوايا حادة (بدون تدوير)",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -138,6 +154,7 @@
     {
       "id": "radius_large",
       "label": "زوايا مدورة بالكامل (دائرية)",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -147,13 +164,20 @@
     },
     {
       "type": "static",
-      "id": "static-products-label",
+      "id": "static-line-3",
+      "format": "line"
+    },
+    {
+      "type": "static",
       "format": "title",
-      "value": "<div style='background-color:#1a1a2e;border-radius:8px;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>إعدادات المنتجات</h6></div>"
+      "id": "static-products-title",
+      "value": "<div class='rounded-lg' style='background-color:#1a1a2e;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>إعدادات المنتجات</h6></div>",
+      "variant": "h6"
     },
     {
       "id": "show_product_quick_view",
       "label": "إظهار زر العرض السريع على بطاقة المنتج",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -164,6 +188,7 @@
     {
       "id": "show_product_wishlist",
       "label": "إظهار زر المفضلة على بطاقة المنتج",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -174,6 +199,7 @@
     {
       "id": "products_col_mobile_one",
       "label": "عرض منتج واحد في الصف على الجوال",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -183,7 +209,8 @@
     },
     {
       "id": "products_col_3_desktop",
-      "label": "عرض 3 منتجات في الصف على سطح المكتب",
+      "label": "عرض 3 منتجات في الصف على الحاسب",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -193,7 +220,8 @@
     },
     {
       "id": "products_col_5_desktop",
-      "label": "عرض 5 منتجات في الصف على سطح المكتب",
+      "label": "عرض 5 منتجات في الصف على الحاسب",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -203,7 +231,8 @@
     },
     {
       "id": "hero_height_large",
-      "label": "البانر الرئيسي: ارتفاع كبير 80vh",
+      "label": "البانر الرئيسي: ارتفاع كبير 80%",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -213,7 +242,8 @@
     },
     {
       "id": "hero_height_medium",
-      "label": "البانر الرئيسي: ارتفاع متوسط 60vh",
+      "label": "البانر الرئيسي: ارتفاع متوسط 60%",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
@@ -223,79 +253,48 @@
     },
     {
       "type": "static",
-      "id": "static-footer-label",
+      "id": "static-line-4",
+      "format": "line"
+    },
+    {
+      "type": "static",
       "format": "title",
-      "value": "<div style='background-color:#1a1a2e;border-radius:8px;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>إعدادات أسفل الصفحة</h6></div>"
+      "id": "static-footer-title",
+      "value": "<div class='rounded-lg' style='background-color:#1a1a2e;display:flex;justify-content:center;align-items:center;padding:15px;margin-bottom:20px;flex-direction:column;gap:8px;'><h6 style='color:#e2b96f;font-size:15px;font-weight:bold;'>إعدادات الفوتر</h6></div>",
+      "variant": "h6"
     },
     {
       "id": "show_newsletter",
       "label": "إظهار قسم النشرة البريدية",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
       "required": false,
       "value": true,
       "selected": true
-    },
-    {
-      "id": "newsletter_title",
-      "label": "عنوان قسم النشرة البريدية",
-      "type": "string",
-      "icon": "sicon-format-text-alt",
-      "format": "text",
-      "required": false,
-      "value": "اشترك في نشرتنا البريدية",
-      "placeholder": "عنوان قسم النشرة..."
-    },
-    {
-      "id": "newsletter_subtitle",
-      "label": "الوصف الفرعي للنشرة البريدية",
-      "type": "string",
-      "icon": "sicon-typography",
-      "format": "text",
-      "required": false,
-      "value": "احصل على أحدث العروض والمنتجات مباشرة في بريدك",
-      "placeholder": "وصف قسم النشرة..."
     },
     {
       "id": "show_whatsapp",
       "label": "إظهار زر التواصل عبر واتساب",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
       "required": false,
       "value": true,
       "selected": true
-    },
-    {
-      "id": "whatsapp_number",
-      "label": "رقم واتساب (مثال: 966501234567)",
-      "type": "string",
-      "icon": "sicon-format-text-alt",
-      "format": "text",
-      "required": false,
-      "value": "",
-      "placeholder": "966501234567"
     },
     {
       "id": "show_back_to_top",
       "label": "إظهار زر العودة لأعلى الصفحة",
+      "description": null,
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "format": "switch",
       "required": false,
       "value": true,
       "selected": true
-    },
-    {
-      "id": "custom_css",
-      "label": "CSS مخصص إضافي",
-      "type": "string",
-      "icon": "sicon-code",
-      "format": "textarea",
-      "required": false,
-      "value": "",
-      "placeholder": "/* أضف تنسيقاتك المخصصة هنا */"
     }
   ],
   "components": [
@@ -346,7 +345,7 @@
               "required": true,
               "value": null,
               "placeholder": null,
-              "description": "المقاس المناسب للصورة هو 1920×900 بكسل"
+              "description": "المقاس المناسب 1920×900 بكسل"
             },
             {
               "id": "slides.title",
@@ -423,8 +422,8 @@
           "icon": "sicon-format-text-alt",
           "format": "text",
           "required": false,
-          "value": "تسوق حسب التصنيف",
-          "placeholder": "أدخل عنوان القسم...",
+          "value": null,
+          "placeholder": "تسوق حسب التصنيف",
           "minLength": 0,
           "maxLength": 100
         },
@@ -435,8 +434,8 @@
           "icon": "sicon-typography",
           "format": "text",
           "required": false,
-          "value": "اكتشف تشكيلتنا المتنوعة",
-          "placeholder": "أدخل العنوان الفرعي...",
+          "value": null,
+          "placeholder": "اكتشف تشكيلتنا المتنوعة",
           "minLength": 0,
           "maxLength": 100
         },
@@ -478,8 +477,8 @@
           "icon": "sicon-format-text-alt",
           "format": "text",
           "required": false,
-          "value": "علاماتنا التجارية",
-          "placeholder": "أدخل عنوان القسم...",
+          "value": null,
+          "placeholder": "علاماتنا التجارية",
           "minLength": 0,
           "maxLength": 100
         },
@@ -545,7 +544,7 @@
               "required": true,
               "value": null,
               "placeholder": null,
-              "description": "المقاس المناسب للصورة هو 800×500 بكسل"
+              "description": "المقاس المناسب 800×500 بكسل"
             },
             {
               "id": "banners.title",
@@ -598,8 +597,8 @@
           "icon": "sicon-format-text-alt",
           "format": "text",
           "required": false,
-          "value": "عرض اليوم",
-          "placeholder": "أدخل عنوان العرض...",
+          "value": null,
+          "placeholder": "عرض اليوم",
           "minLength": 0,
           "maxLength": 100
         },
@@ -610,21 +609,21 @@
           "icon": "sicon-typography",
           "format": "text",
           "required": false,
-          "value": "لا تفوت هذا العرض الحصري",
-          "placeholder": "أدخل نصاً وصفياً...",
+          "value": null,
+          "placeholder": "لا تفوت هذا العرض الحصري",
           "minLength": 0,
           "maxLength": 150
         },
         {
           "id": "end_date",
-          "label": "تاريخ ووقت انتهاء العرض (YYYY-MM-DD HH:MM)",
+          "label": "تاريخ انتهاء العرض",
           "type": "string",
           "icon": "sicon-format-text-alt",
           "format": "text",
           "required": false,
-          "value": "",
+          "value": null,
           "placeholder": "2025-12-31 23:59",
-          "description": "اكتب التاريخ بصيغة: 2025-12-31 23:59"
+          "description": "اكتب التاريخ بهذا الشكل: 2025-12-31 23:59"
         },
         {
           "id": "bg_image",
@@ -638,7 +637,7 @@
         },
         {
           "id": "bg_dark",
-          "label": "استخدام خلفية داكنة (رمادي داكن)",
+          "label": "استخدام خلفية داكنة",
           "type": "boolean",
           "icon": "sicon-toggle-off",
           "format": "switch",
